@@ -46,140 +46,69 @@ void drive_robot(float lin_x, float ang_z)
 
 // This callback function executes every time an image is received
 
-void process_image_callback(const sensor_msgs::Image img)
-
+void process_image_callback(const sensor_msgs::Image& img)
 {
+    int white = 255;
+    int sum_x = 0;
+    int count = 0;
 
-    int white_pixel = 255;
-    bool ball_found = false;
-
-    int ball_pos = -1;
-
-
-
-    // Loop through image data (3 bytes per pixel)
-
-    for (int i = 0; i < img.height * img.step; i += 3) {
-
-
-
+    // Scan image for white pixels
+    for (int i = 0; i < img.height * img.step; i += 3)
+    {
         int r = img.data[i];
-
         int g = img.data[i + 1];
-
         int b = img.data[i + 2];
 
-
-
-        // Detect white pixel
-
-        if (r == white_pixel && g == white_pixel && b == white_pixel) {
-			ball_found = true;
-
-            ball_pos = (i / 3) % img.width; // horizontal position
-
-            break;
-
+        if (r == white && g == white && b == white)
+        {
+            int x = (i / 3) % img.width;
+            sum_x += x;
+            count++;
         }
-		//Detect red pixel
-		if (r == 255 && g == 0 && b == 0) {
-			ball_found = true;
-            ball_pos = (i / 3) % img.width; // horizontal position
-
-            break;
-
-        }
-		//Detect green pixel
-		 if (r == 0 && g == 255 && b == 0) {
-			ball_found = true;
-            ball_pos = (i / 3) % img.width; // horizontal position
-
-            break;
-
-        }
-		//Detect blue pixel
-		if (r == 0 && g == 0 && b == 255) {
-
-            ball_pos = (i / 3) % img.width; // horizontal position
-
-            break;
-
-        }
-
     }
-	
-	int left_bound = img.width / 3;
-    int right_bound = 2 * img.width / 3;
 
-
-
-    // No ball detected → stop robot
-
-    //if (ball_pos == -1) {
-
-     //   drive_robot(0.0, 0.0);
-
-        return;
-
-   // }
-   
-   if (ball_found)
+    // No ball → search
+    if (count == 0)
     {
-        if (ball_pos < left_bound)
-        {
-            // Ball is on LEFT → turn left
-            drive_robot(0.0, 0.5);
-        }
-        else if (ball_pos > right_bound)
-        {
-            // Ball is on RIGHT → turn right
-            drive_robot(0.0, -0.5);
-        }
-        else
-        {
-            // Ball is CENTER → move forward
-            drive_robot(0.5, 0.0);
-        }
+        drive_robot(0.0, 0.3);
+        return;
+    }
+
+    // Compute ball center
+    int ball_x = sum_x / count;
+    int mid = img.width / 2;
+    int error = ball_x - mid;
+
+    // Tuning parameters
+    float max_ang = 0.4;
+    float forward_speed = 0.4;
+    int center_tolerance = 30;  // pixels
+
+    float angular = 0.0;
+    float linear  = 0.0;
+
+    // Angular control (proportional)
+    angular = -0.002 * error;
+
+    // Clamp angular velocity
+    if (angular >  max_ang) angular =  max_ang;
+    if (angular < -max_ang) angular = -max_ang;
+
+    // Forward motion logic
+    if (abs(error) < center_tolerance)
+    {
+        // Ball roughly centered → move forward
+        linear = forward_speed;
     }
     else
     {
-        // No ball → rotate in place to search
-        drive_robot(0.0, 0.5);  // slow spin left
+        // Ball far off → rotate only
+        linear = 0.0;
     }
 
-
-
-    // Divide width into left/middle/right
-
-    //int section = img.width / 3;
-
-
-
-    //if (ball_pos < section) {
-
-        // Left side → turn left
-
-     //   drive_robot(0.0, 0.5);
-
-    //}
-
-   // else if (ball_pos < 2 * section) {
-
-        // Middle → move forward
-
-      //  drive_robot(0.5, 0.0);
-
-   // }
-
-   // else {
-
-        // Right → turn right
-
-     //   drive_robot(0.0, -0.5);
-
-   // }
-
+    drive_robot(linear, angular);
 }
+
 
 
 
