@@ -21,14 +21,14 @@
 	<collision name='collision'>
 	  <origin xyz="0 0 0" rpy=" 0 0 0"/> 
 	  <geometry>
-		<box size=".4 .2 .1"/>
+		<box size=".4 .1 .1"/>
 	  </geometry>
 	</collision>
 
 	<visual name='chassis_visual'>
 	  <origin xyz="0 0 0" rpy=" 0 0 0"/>
 	  <geometry>
-		<box size=".4 .2 .1"/>
+		<box size=".4 .1 .1"/>
 	  </geometry>
 	  <material name="yellow">
 		<color rgba="1 1 0 1"/>
@@ -89,7 +89,7 @@
 	<collision>
 	  <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
 	  <geometry>
-	<cylinder radius="0.1" length="0.05"/>
+	<cylinder radius="0.05" length="0.05"/>
 	  </geometry>
 	</collision>
 
@@ -97,7 +97,7 @@
 	<visual>
 	  <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
 	  <geometry>
-	<cylinder radius="0.1" length="0.05"/>
+	<cylinder radius="0.05" length="0.05"/>
 	  </geometry>
 	  <material name="orange">
 		<color rgba="1 0.5 0 1"/>
@@ -121,7 +121,7 @@
 	<collision>
 	  <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
 	  <geometry>
-	<cylinder radius="0.1" length="0.05"/>
+	<cylinder radius="0.05" length="0.05"/>
 	  </geometry>
 	</collision>
 
@@ -129,7 +129,7 @@
 	<visual>
 	  <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
 	  <geometry>
-	<cylinder radius="0.1" length="0.05"/>
+	<cylinder radius="0.05" length="0.05"/>
 	  </geometry>
 	 <material name="orange">
 		<color rgba="1 0.5 0 1"/>
@@ -211,7 +211,7 @@
 
 	<!-- Left wheel joint -->
 	<joint type="continuous" name="left_wheel_hinge">
-		<origin xyz="0 0.15 0" rpy="0 0 0"/>
+		<origin xyz="0 0.06 -0.05" rpy="0 0 0"/>
 		<child link="left_wheel"/>
 		<parent link="chassis"/>
 		<axis xyz="0 1 0" rpy="0 0 0"/>
@@ -221,7 +221,7 @@
 
 	<!-- Right wheel joint -->
 	  <joint type="continuous" name="right_wheel_hinge">
-		<origin xyz="0 -0.15 0" rpy="0 0 0"/>
+		<origin xyz="0 -0.06 -0.05" rpy="0 0 0"/>
 		<child link="right_wheel"/>
 		<parent link="chassis"/>
 		<axis xyz="0 1 0" rpy="0 0 0"/>
